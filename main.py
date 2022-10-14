@@ -1,8 +1,6 @@
 import math
 from math import *
 
-# consts
-
 E = 0.01
 dlt = E / 100
 
@@ -41,7 +39,6 @@ def powell(dlt, n):
         else:
             x1 -= dlt
             while y1 < y2:
-                # print("x1 = ", x1, " x2 = ", x2, " f1 = ", y1, " f2 = ", y2)
                 # print("2")
                 horpoints += 1
                 y2 = foo(x1, x2, n)
@@ -54,7 +51,6 @@ def powell(dlt, n):
         y2 = foo(x1, x2 - dlt, n)
         if y1 >= y2:
             while y1 >= y2:
-                # print("x1 = ", x1, " x2 = ", x2, " f = ", fooA(x1, x2))
                 # print("3")
                 verpoints -= 1
                 y1 = foo(x1, x2, n)
@@ -65,7 +61,6 @@ def powell(dlt, n):
         else:
             while y1 < y2:
                 # print("4")
-                # print("x1 = ", x1, " x2 = ", x2 - d, " f = ", fooA(x1, x2 - d))
                 verpoints += 1
                 y2 = foo(x1, x2, n)
                 x2 += dlt
