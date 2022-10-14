@@ -107,9 +107,8 @@ def powelA():
 
 
 def powelB(dlt):
-
-    x1 = 0
-    x2 = 0
+    x1 = 2
+    x2 = 2
     while (True):
         y1 = fooB(x1, x2)
         y2 = fooB(x1 + dlt, x2)
@@ -170,7 +169,7 @@ def powelB(dlt):
         if y1 < y2:
             while y1 < y2:
                 dc += 1
-                #print([x1, x2, y1, y2])
+                # print([x1, x2, y1, y2])
                 y2 = fooB(x1, x2)
                 x1 -= dlt * horpoints
                 x2 -= dlt * verpoints
@@ -181,7 +180,7 @@ def powelB(dlt):
         if y1 > y2:
             while y1 > y2:
                 tc += 1
-                #print([x1, x2, y1, y2])
+                # print([x1, x2, y1, y2])
                 y1 = fooB(x1, x2)
                 x1 -= dlt * horpoints
                 x2 -= dlt * verpoints
@@ -193,83 +192,40 @@ def powelB(dlt):
             return [x1, x2]
 
 
+def FindGCenter(x1, x2):
+    x1c = (1 / len(x1)) * sum(x1)
+    x2c = (1 / len(x2)) * sum(x2)
+    return x1c, x2c
+
+
 def symplex(E):
-    def l3(arr):
-        return arr[2]
-
-    maxK = 100000
-    n = 2
-    a = 1
-    b = 2
-    g = 0.5
-    k = 0.5
-    x1 = [-2, -4, 0]
-    x2 = [x1[0] + x1[0] * k, x1[1], 0]
-    x3 = [x1[0], x1[1] + x1[1] * k, 0]
-    x1[2] = fooA(x1[0], x1[1])
-    x2[2] = fooA(x2[0], x2[1])
-    x3[2] = fooA(x3[0], x3[1])
-    x = [x1, x2, x3]
-
-    sig2 = 0
-    for i in range(1, n + 1):
-        ff = 0
-        for j in range(1, n + 1):
-            ff += x[j][2] / (n + 1)
-        sig2 += pow(x[i][2] - ff, 2) / (n + 1)
-
-    while (sqrt(sig2) >= e):
-        x1[2] = fooA(x1[0], x1[1])
-        x2[2] = fooA(x2[0], x2[1])
-        x3[2] = fooA(x3[0], x3[1])
-        x.sort(key=l3)
-
-        xc = [(x[0][0] + x[1][0]) / n, (x[0][1] + x[1][1]) / n, 0]
-        xc[2] = fooA(xc[0], xc[1])
-        y0 = fooA(xc[0] - xc[2], xc[1] - xc[2])
-        x0 = [(1 + a) * xc[0] - a * x[2][0], (1 + a) * xc[1] - a * x[2][1], 0]
-        x0[2] = fooA(x0[0], x0[1])
-        y0 = fooA(x0[0] - y0, x0[1] - y0)
-        if (y0 < x[0][2]):
-            xr = [(1 - b) * xc[0] - b * x0[0], (1 - b) * xc[1] - b * x0[1], 0]
-            xr[2] = fooA(xr[0], xr[1])
-            yr = fooA(xr[0] - xr[2], xr[1] - xr[2])
-            if (yr < y0):
-                x[2] = xr
-            else:
-                x[2] = x0
-        elif (y0 <= x[1][2]):
-            x[2] = x0
-        elif (y0 < x[2][2]):
-            xg = [(1 - g) * xc[0] + g * x0[0], (1 - g) * xc[1] + g * x0[1], 0]
-            xg[2] = fooA(xg[0], xg[1])
-            yg = fooA(xg[0] - xg[2], xg[1] - xg[2])
-            if (yg < x[2][2]):
-                x[2] = xg
-        else:
-            xg = [(1 - g) * xc[0] + g * x[2][0], (1 - g) * xc[1] + g * x[2][1], 0]
-            xg[2] = fooA(xg[0], xg[1])
-            yg = fooA(xg[0] - xg[2], xg[1] - xg[2])
-            if (yg < x[2][2]):
-                x[2] = xg
-            else:
-                for i in range(1, n + 1):
-                    x[i][0] = x[i][0] - (x[i][0] - x[0][0]) / 2
-                    x[i][1] = x[i][1] - (x[i][1] - x[0][1]) / 2
-
-        sig2 = 0
-        for i in range(1, n + 1):
-            ff = 0
-            for j in range(1, n + 1):
-                ff += x[j][2] / (n + 1)
-            sig2 += pow(x[i][2] - ff, 2) / (n + 1)
-        maxK -= 1
-        if (maxK <= 0): break
-
-    return [(x[0][0] + x[1][0] + x[2][0]) / 3, (x[0][1] + x[1][1] + x[2][1]) / 3]
+    # задаётся n+1 точка
+    x1i = [0, 1, 2]
+    x2i = [0, 1, 2]
+    # вычесляются y-ки
+    yi = [fooA(x1i[0], x2i[0]), fooA(x1i[1], x2i[1]), fooA(x1i[2], x2i[2])]
+    print("y = ", yi)
+    # находим h, g, l
+    h = max(yi)
+    yig = yi.copy()
+    yig.remove(h)
+    g = max(yig)
+    l = min(yi)
+    print(h, g, l)
+    # определяем центр тяжести всех точек кроме h
+    x1ic = x1i
+    x1ic.remove(yi.index(h))
+    x2ic = x2i
+    x2ic.remove(yi.index(h))
+    xc = FindGCenter(x1ic, x2ic)
+    print(xc)
+    # вычисляем значение целевой функции в точке xc-f(xc)
+    y = fooA(xc[0] - fooA(xc[0], xc[1]), xc[1] - fooA(xc[0], xc[1]))
+    print(y)
+    return h, g, l
 
 
 print("Start:")
-print("Powell a) = ", powelA())
-print("Powell b) = ", powelB(dlt/500))
+# print("Powell a) = ", powelA())
+# print("Powell b) = ", powelB(dlt / 42))
 print("Symplex = ", symplex(E))
