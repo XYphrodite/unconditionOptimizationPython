@@ -78,10 +78,9 @@ def powel():
         y1 = fooA(x1, x2)
         y2 = fooA(x1 + dlt * horpoints / 100, x2 + dlt * verpoints / 100)
         if y1 < y2:
-            DD = True
             while y1 < y2:
                 dc += 1
-                print([x1, x2, y1, y2])
+                #print([x1, x2, y1, y2])
                 y2 = fooA(x1, x2)
                 x1 -= dlt * horpoints
                 x2 -= dlt * verpoints
@@ -90,10 +89,9 @@ def powel():
             x2 += dlt * verpoints
 
         if y1 > y2:
-            DT = True
             while y1 > y2:
                 tc += 1
-                print([x1, x2, y1, y2])
+                #print([x1, x2, y1, y2])
                 y1 = fooA(x1, x2)
                 x1 -= dlt * horpoints
                 x2 -= dlt * verpoints
@@ -103,9 +101,8 @@ def powel():
         if (math.fabs(horpoints) <= 2) and (math.fabs(verpoints) <= 2) and ((dc <= 2) or (tc <= 2)):
             return [x1, x2]
 
-        #return [x1, x2]
-        #print([x1, x2])
-
+def symplex():
+    
 
 print("Start:")
 print("Powel = ", powel())
