@@ -1,5 +1,6 @@
 import math
 from math import *
+import numpy as np
 
 E = 0.01
 dlt = E / 100
@@ -70,7 +71,6 @@ def powell(dlt, n):
         # print([x1, x2])
         # print(horpoints)
         # print(verpoints)
-
         dc = 0
         tc = 0
         y1 = foo(x1, x2, n)
@@ -100,40 +100,95 @@ def powell(dlt, n):
             return [x1, x2]
 
 
-def FindGCenter(x1, x2):
-    x1c = (1 / len(x1)) * sum(x1)
-    x2c = (1 / len(x2)) * sum(x2)
-    return x1c, x2c
+def FindGCenter(p, n):
+    xc = [(p[0][0] + p[1][0]) / 2, (p[0][1] + p[1][1]) / 2, 0]
+    xc[2] = foo(xc[0], xc[1], n)
+    return xc
 
 
 def symplex(dlt, n):
+    def y(arr):
+        return arr[2]
+
+    N = 2
+    a = 1
+    b = 0.5
+    g = 2
+    k = 0.5
+    #####################################
     # задаётся n+1 точка
-    x1i = [0, 1, 2]
-    x2i = [0, 1, 2]
+    #    x1  x2 f
+    p1 = [0, 0, 0]
+    p2 = [1, 0, 0]
+    p3 = [0, 1, 0]
     # вычесляются y-ки
-    yi = [foo(x1i[0], x2i[0], n), foo(x1i[1], x2i[1], n), foo(x1i[2], x2i[2], n)]
-    print("y = ", yi)
+    p1[2] = foo(p1[0], p1[1], n)
+    p2[2] = foo(p2[0], p2[1], n)
+    p3[2] = foo(p3[0], p3[1], n)
+
+    p = [p1, p2, p3]
+    ff = (p[0][2] + p[1][2] + p[2][2]) / 3
+    sig2 = (pow(p[0][2] - ff, 2) + pow(p[1][2] - ff, 2) + pow(p[2][2] - ff, 2)) / 3
     # находим h, g, l
-    h = max(yi)
-    yig = yi.copy()
-    yig.remove(h)
-    g = max(yig)
-    l = min(yi)
-    print(h, g, l)
-    # определяем центр тяжести всех точек кроме h
-    x1ic = x1i
-    x1ic.remove(yi.index(h))
-    x2ic = x2i
-    x2ic.remove(yi.index(h))
-    xc = FindGCenter(x1ic, x2ic)
-    print(xc)
-    # вычисляем значение целевой функции в точке xc-f(xc)
-    y = foo(xc[0] - foo(xc[0], xc[1], n), xc[1] - foo(xc[0], xc[1], n), n)
-    print(y)
-    return h, g, l
+    while (sqrt(sig2) >= dlt):
+        # вычесляются y-ки
+        p1[2] = foo(p1[0], p1[1], n)
+        p2[2] = foo(p2[0], p2[1], n)
+        p3[2] = foo(p3[0], p3[1], n)
+        p.sort(key=y)
+        # определяем центр тяжести всех точек кроме h
+        xc = FindGCenter(p, n)
+
+        xr = [xc[0] + a * (xc[0] - p[2][0]), xc[1] + a * (xc[1] - p[2][1]), 0]
+        xr[2] = foo(xr[0], xr[1], n)
+
+        if (xr[2] < p[2][2]):
+            xe = [xc[0] + g * (xc[0] - p[2][0]), xc[1] + g * (xc[1] - p[2][1]), 0]
+            xe[2] = foo(xe[0], xe[1], n)
+            # expand
+            if (xe[2] < p[2][2]):
+                p[2] = xe
+            # reflect
+            else:
+                p[2] = xr
+            # reflect
+        elif (xr[2] < p[1][2]):
+            p[2] = xr
+        elif (xr[2] < p[2][2]):
+            xcon = [xc[0] + b * (xc[0] - p[2][0]), xc[1] + b * (xc[1] - p[2][1]), 0]
+            xcon[2] = f(xcon[0], xcon[1])
+            # outside contract
+            if (xcon[2] <= xr):
+                p[2] = xcon
+            # shrink
+            else:
+                for i in range(1, N + 1):
+                    x[i][0] = (x[i][0] + x[0][0]) / 2
+                    x[i][1] = (x[i][1] + x[0][1]) / 2
+                    x[i][2] = f(x[i][0], x[i][1])
+        else:
+            xcon = [xc[0] + b * (p[2][0] - xc[0]), xc[1] + b * (p[2][1] - xc[1]), 0]
+            xcon[2] = foo(xcon[0], xcon[1], n)
+            # inside contract
+            if (xcon[2] < p[2][2]):
+                p[2] = xcon
+            # shrink
+            else:
+                for i in range(1, N + 1):
+                    p[i][0] = (p[i][0] + p[0][0]) / 2
+                    p[i][1] = (p[i][1] + p[0][1]) / 2
+                    p[i][2] = foo(p[i][0], p[i][1], n)
+
+        ff = (p[0][2] + p[1][2] + p[2][2]) / 3
+        sig2 = (pow(p[0][2] - ff, 2) + pow(p[1][2] - ff, 2) + pow(p[2][2] - ff, 2)) / 3
+
+    return [(p[0][0] + p[1][0] + p[2][0]) / 3, (p[0][1] + p[1][1] + p[2][1]) / 3]
 
 
 print("Start:")
 print("Powell a) = ", powell(dlt, 0))
 print("Powell b) = ", powell(dlt / 42, 1))
-print("Symplex = ", symplex(dlt, 0))
+print("Symplex a) = ", symplex(dlt, 0))
+print("Symplex b) = ", symplex(dlt / 42, 1))
+
+
