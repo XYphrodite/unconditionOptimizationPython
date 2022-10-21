@@ -125,8 +125,8 @@ def symplex(dlt, n):
     p1[2] = foo(p1[0], p1[1], n)
     p2[2] = foo(p2[0], p2[1], n)
     p3[2] = foo(p3[0], p3[1], n)
-
     p = [p1, p2, p3]
+
     ff = (p[0][2] + p[1][2] + p[2][2]) / 3
     sig2 = (pow(p[0][2] - ff, 2) + pow(p[1][2] - ff, 2) + pow(p[2][2] - ff, 2)) / 3
     # находим h, g, l
@@ -145,13 +145,13 @@ def symplex(dlt, n):
         if (xr[2] < p[2][2]):
             xe = [xc[0] + g * (xc[0] - p[2][0]), xc[1] + g * (xc[1] - p[2][1]), 0]
             xe[2] = foo(xe[0], xe[1], n)
-            # expand
-            if (xe[2] < p[2][2]):
+            # растяжение
+            if (xe[2] < p[2][2]): #f0<fl
                 p[2] = xe
-            # reflect
+            # отражение
             else:
                 p[2] = xr
-            # reflect
+            # отражение
         elif (xr[2] < p[1][2]):
             p[2] = xr
         elif (xr[2] < p[2][2]):
@@ -160,7 +160,7 @@ def symplex(dlt, n):
             # outside contract
             if (xcon[2] <= xr):
                 p[2] = xcon
-            # shrink
+            # уменьшение
             else:
                 for i in range(1, N + 1):
                     x[i][0] = (x[i][0] + x[0][0]) / 2
