@@ -138,9 +138,9 @@ def symplex(pi, dlt, n):
     p = [p1, p2, p3]
 
     ff = (p[0][2] + p[1][2] + p[2][2]) / 3
-    sig = (pow(p[0][2] - ff, 2) + pow(p[1][2] - ff, 2) + pow(p[2][2] - ff, 2)) / 3
+    sig2 = (pow(p[0][2] - ff, 2) + pow(p[1][2] - ff, 2) + pow(p[2][2] - ff, 2)) / 3
 
-    while (sqrt(sig) >= dlt):
+    while (sqrt(sig2) >= dlt):
         # вычесляются y-ки
         p1[2] = foo(p1[0], p1[1], n)
         p2[2] = foo(p2[0], p2[1], n)
@@ -150,6 +150,7 @@ def symplex(pi, dlt, n):
         # определяем центр тяжести всех точек кроме h
         xc = FindGCenter(p, n)
         # xr
+
         xr = [xc[0] + a * (xc[0] - p[2][0]), xc[1] + a * (xc[1] - p[2][1]), 0]
         xr[2] = foo(xr[0], xr[1], n)
 
